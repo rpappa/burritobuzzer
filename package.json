@@ -1,0 +1,26 @@
+{
+    "name": "@rpappa/burritobuzzer",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/src/twitterMonitor.js",
+    "type": "module",
+    "devDependencies": {
+        "@sindresorhus/tsconfig": "^3.0.1",
+        "@types/tunnel": "^0.0.3",
+        "cross-env": "^7.0.3",
+        "typescript": "^5.0.4"
+    },
+    "scripts": {
+        "start": "npx tsc && node dist/src/twitterMonitor.js",
+        "mock": "npx tsc && cross-env MOCK_CODES=1 node dist/src/twitterMonitor.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "dotenv": "^16.1.4",
+        "got": "^13.0.0",
+        "tesseract.js": "^4.1.0",
+        "tunnel": "^0.0.6"
+    }
+}

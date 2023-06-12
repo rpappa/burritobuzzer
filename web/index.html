@@ -1,0 +1,225 @@
+<html>
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-98TDE7EZP5"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+
+            gtag("config", "G-98TDE7EZP5");
+        </script>
+        <title>Burrito</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- inline style -->
+        <style>
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 90vh;
+            }
+
+            .row {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                font-size: 3em;
+                color: white;
+                text-decoration: none;
+
+                /* grow to fill parent */
+                flex-grow: 1;
+            }
+
+            .row.small {
+                font-size: 1em;
+            }
+
+            body {
+                overflow: hidden;
+                background-color: black;
+                color: white;
+                font-family: sans-serif;
+            }
+
+            a,
+            a:visited {
+                /* light blue links */
+                color: #2196f3;
+            }
+
+            .instructions {
+                position: absolute;
+
+                background-color: black;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+
+                padding: 1em;
+
+                display: none;
+            }
+
+            .instructions .close {
+                display: block;
+                text-align: right;
+                width: 100%;
+                color: white;
+                cursor: pointer;
+                margin-bottom: 1em;
+            }
+
+            ol > li {
+                margin-bottom: 0.5em;
+            }
+
+            .top {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="instructions close-on-click">
+            <span class="close close-on-click">Close X</span>
+            <ol>
+                <li>
+                    Install the shortcut (only need to do this once)
+                    <a href="{{SHORTCUT_URL}}">Shortcut install link</a>
+                </li>
+                <li>Wait for the "Open Shortcut" link to display</li>
+                <li>Click the "Open Shortcut" link</li>
+                <li>Give any permissions prompted to the shortcut</li>
+                <li>
+                    Ignore the initial "we didn't catch that" text. This is part of making sure the shortcut permissions
+                    are set up properly and will be sent every time the "Open Shortcut" link is clicked.
+                </li>
+                <li>
+                    You can now wait. You will get a notification from the shortcut when a text is automatically sent.
+                    If a text was sent but it was unsuccessful, just press "Open Shortcut" again.
+                </li>
+            </ol>
+            <span class="close-on-click">Now that you have read these instructions, close them and start cooking!
+                You can revisit any time from the link in the upper right.</span>
+        </div>
+        <div class="top">
+            <span class="title">Free Burritos 👀</span>
+            <a class="open-instructions">Instructions ⁉️</span>
+        </div>
+        <div class="container">
+            <div class="row">
+                <a target="_blank" id="golink" style="display: none">Open Shortcut</a>
+            </div>
+
+            <div class="row small">
+                <span>Polling server</span>
+                <span id="polltime">Last poll: never</span>
+                <span id="lastcode">Last code: N/A</span>
+                <span>(if not polling, <a href=".">refresh</a>)</span>
+            </div>
+        </div>
+
+        <script>
+            /**
+             * Try storing that we have viewed instructions both in local storage and in a cookie.
+             * This is to prevent the instructions from being shown every time the page is loaded.
+             */
+            function storeViewedInstructions() {
+                try {
+                    localStorage.setItem("viewedInstructions", "true");
+                } catch (e) {
+                    console.error("Failed to store viewed instructions in local storage", e);
+                }
+
+                try {
+                    document.cookie = "viewedInstructions=true;max-age=31536000";
+                } catch (e) {
+                    console.error("Failed to store viewed instructions in cookie", e);
+                }
+            }
+
+            /**
+             * Check if we have viewed instructions before.
+             * This is to prevent the instructions from being shown every time the page is loaded.
+             */
+            function getViewedInstructions() {
+                try {
+                    const viewedInstructions = localStorage.getItem("viewedInstructions");
+                    if (viewedInstructions) {
+                        return true;
+                    }
+                } catch (e) {
+                    console.error("Failed to get viewed instructions from local storage", e);
+                }
+
+                try {
+                    const cookies = document.cookie.split(";");
+                    for (const cookie of cookies) {
+                        const [name, value] = cookie.split("=");
+                        if (name.trim() === "viewedInstructions" && value.trim() === "true") {
+                            return true;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to get viewed instructions from cookie", e);
+                }
+
+                return false;
+            }
+
+            if(getViewedInstructions()) {
+                document.querySelector(".instructions").style.display = "none";
+            } else {
+                document.querySelector(".instructions").style.display = "block";
+                storeViewedInstructions();
+            }
+
+            document.querySelectorAll(".close-on-click").forEach(el => {
+                el.addEventListener("click", evt => {
+                    if (evt.target.classList.contains("close-on-click")) {
+                        document.querySelector(".instructions").style.display = "none";
+                        storeViewedInstructions();
+                    }
+                });
+            });
+
+            document.querySelector(".open-instructions").addEventListener("click", () => {
+                document.querySelector(".instructions").style.display = "block";
+            });
+
+            const hostname = window.location.hostname;
+
+            setInterval(async () => {
+                const last = await fetch("http://" + hostname + ":9090/last");
+
+                const text = await last.text();
+
+                const url = `http://${hostname}:9090/code?last=${encodeURIComponent(btoa(text))}`;
+
+                const link = `shortcuts://run-shortcut?name=autochip&input=${encodeURIComponent(btoa(url))}`;
+
+                const golink = document.querySelector("#golink");
+
+                golink.href = link;
+                golink.style.display = "block";
+
+                const lastPoll = document.querySelector("#polltime");
+                lastPoll.innerText = `Last poll: ${new Date().toLocaleTimeString()}`;
+
+                const lastCode = document.querySelector("#lastcode");
+                lastCode.innerText = `Last code: ${text || "N/A"}`;
+            }, 1000);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+{
+    "extends": "@sindresorhus/tsconfig",
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "outDir": "dist",
+        "target": "ES2021",
+        "composite": true
+    },
+    "ts-node": {
+        "transpileOnly": true,
+        "files": true,
+        "experimentalResolver": true,
+        "experimentalDecorators": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist", "coverage"]
+}
