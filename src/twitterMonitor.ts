@@ -9,7 +9,7 @@ import "./env.js";
 // A certain fast casual restaurant serving burritos, bowls, and other delicious things
 const MONITOR_USER_ID = "141341662";
 
-const MONITOR_INTERVAL = process.env["MOCK_CODES"] ? 1000 : 10000;
+const MONITOR_INTERVAL = process.env["MOCK_CODES"] ? 10000 : 1000;
 
 const MONITOR_PROXY_STR = process.env["MONITOR_PROXY"];
 
@@ -168,7 +168,7 @@ async function monitorLogic() {
             console.log(tweet, time);
             console.log(`Detected ${now - time.getTime()}ms late`);
 
-            if (lateness < 10_000) {
+            if (lateness < 20_000) {
                 const burrito = findBurrito(tweet.text);
 
                 if (burrito) {

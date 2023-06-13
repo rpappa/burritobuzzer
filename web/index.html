@@ -88,6 +88,12 @@
                 justify-content: space-between;
                 padding: 1em;
             }
+
+            .bottom {
+                position: fixed;
+                bottom: 1em;
+                right: 1em;
+            }
         </style>
     </head>
     <body>
@@ -95,7 +101,7 @@
             <span class="close close-on-click">Close X</span>
             <ol>
                 <li>
-                    Install the shortcut (only need to do this once)
+                    Install the shortcut (only need to do this once) then return here.
                     <a href="{{SHORTCUT_URL}}">Shortcut install link</a>
                 </li>
                 <li>Wait for the "Open Shortcut" link to display</li>
@@ -128,6 +134,11 @@
                 <span id="lastcode">Last code: N/A</span>
                 <span>(if not polling, <a href=".">refresh</a>)</span>
             </div>
+        </div>
+
+        <div class="bottom">
+            <a class="github-button" href="https://github.com/rpappa" aria-label="Follow @rpappa on GitHub">Follow @rpappa</a>
+            <a class="github-button" href="https://github.com/rpappa/burritobuzzer" data-icon="octicon-star" aria-label="Star rpappa/burritobuzzer on GitHub">Star</a>
         </div>
 
         <script>
@@ -221,5 +232,7 @@
                 lastCode.innerText = `Last code: ${text || "N/A"}`;
             }, 1000);
         </script>
+
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
     </body>
 </html>
